@@ -1,0 +1,78 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9;
+}
+
+h1 {
+  text-align: center;
+  padding: 1rem;
+}
+
+form {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+select, input[type="text"], button {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.task-board {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.task-column {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  width: 300px;
+  min-height: 100px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.task-column h2 {
+  text-align: center;
+  margin-top: 0;
+}
+
+.task-card {
+  background: #f1f1f1;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.task-card h3 {
+  margin: 0 0 0.5rem;
+}
+
+.task-card button {
+  margin-top: 0.5rem;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.task-card button:hover {
+  background-color: #0056b3;
+}
+
+.task-card select {
+  margin-top: 0.5rem;
+  width: 100%;
+}
