@@ -6,11 +6,12 @@ import { TaskBoard } from "./components/TaskBoard";
 import { assignmentsRef } from "./firebase/config";
 import { onValue } from "firebase/database";
 
-
 export function App() {
   const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState("all");
-  const [sort, setSort] = useState("default");
+  const [filter, setFilter] = useState("all"); // status: done/notDone
+  const [sort, setSort] = useState("default"); // title or timestamp sorting
+  const [selectedCategory, setCategory] = useState("all");
+  const [selectedMember, setMember] = useState("all");
 
   useEffect(() => {
     onValue(assignmentsRef, (snapshot) => {
@@ -29,8 +30,19 @@ export function App() {
       <h1>Scrum Board</h1>
       <TeamMembersForm />
       <AddTask />
-      <TaskFilter setFilter={setFilter} setSort={setSort} />
-      <TaskBoard tasks={tasks} filter={filter} sort={sort} />
+      <TaskFilter
+        setFilter={setFilter}
+        setSort={setSort}
+        setCategory={setCategory}
+        setMember={setMember}
+      />
+      <TaskBoard
+        tasks={tasks}
+        filter={filter}
+        sort={sort}
+        selectedCategory={selectedCategory}
+        selectedMember={selectedMember}
+      />
     </>
   );
 }

@@ -1,15 +1,28 @@
 import { TaskColumn } from "./TaskColumn";
 
-export function TaskBoard({ tasks, filter, sort }) {
+export function TaskBoard({ tasks, filter, sort, selectedCategory, selectedMember }) {
   const filteredTasks = tasks.filter((task) => {
-    if (filter === "done") return task.status === "finished";
-    if (filter === "notDone") return task.status !== "finished";
-    return true;
+    const statusMatch =
+      filter === "done"
+        ? task.status === "finished"
+        : filter === "notDone"
+        ? task.status !== "finished"
+        : true;
+
+    const categoryMatch =
+      selectedCategory === "all" || task.category === selectedCategory;
+
+    const memberMatch =
+      selectedMember === "all" || task.member === selectedMember;
+
+    return statusMatch && categoryMatch && memberMatch;
   });
 
   const sortedTasks = filteredTasks.toSorted((a, b) => {
     if (sort === "asc") return a.title.localeCompare(b.title);
     if (sort === "des") return b.title.localeCompare(a.title);
+    if (sort === "newest") return b.timestamp.localeCompare(a.timestamp);
+    if (sort === "oldest") return a.timestamp.localeCompare(b.timestamp);
     return 0;
   });
 
