@@ -12,33 +12,143 @@ h1 {
 
 form {
   display: flex;
-  gap: 1rem;
   padding: 1rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-select, input[type="text"], button {
+.form-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  padding: 0 1rem;
+  min-height: 230px; /* 💡 anpassa vid behov */
+}
+
+.form-card {
+  background: white;
+  padding: 0.5rem 1.5rem;
+  max-width: 300px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.form-card h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.form-card label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.form-card input,
+.form-card select {
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.form-card input:focus,
+.form-card select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.form-card button {
+  display: block;
+  margin: 0 auto;
+  padding: 0.4rem 1.25rem;
+  font-size: 0.95rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.form-card button:hover {
+  background-color: #0056b3;
+}
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  font-size: 1rem;
+  z-index: 1000;
+  animation: fadein 0.3s ease-out;
+}
+
+.toast.success {
+  background-color: #28a745;
+}
+
+.toast.error {
+  background-color: #dc3545;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+select,
+input[type="text"],
+button {
   padding: 0.5rem;
   font-size: 1rem;
 }
 
+
+
 .task-board {
   display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  justify-content: center;
   flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
 }
+
 
 .task-column {
   background: #ffffff;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
   padding: 1rem;
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   min-height: 100px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .task-column h2 {
@@ -51,8 +161,36 @@ select, input[type="text"], button {
   border-radius: 0.5rem;
   padding: 0.75rem;
   margin-bottom: 1rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
 }
+
+.task-card:hover {
+  background: #e9e9e9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+}
+
+.task-delete-icon {
+  display: none;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s ease;
+}
+
+.task-card:hover .task-delete-icon {
+  display: inline;
+}
+
+.task-delete-icon:hover {
+  color: #c00;
+}
+
 
 .task-card h3 {
   margin: 0 0 0.5rem;
@@ -75,4 +213,396 @@ select, input[type="text"], button {
 .task-card select {
   margin-top: 0.5rem;
   width: 100%;
+}
+
+.filter-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100vh;
+  background: #f5f5f5;
+  padding: 1rem;
+  padding-top: 4rem;
+  overflow-y: auto;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.filter-sidebar h2 {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.3rem;
+}
+
+.filter-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.filter-option-group button {
+  all: unset;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background 0.2s;
+  cursor: pointer;
+  max-width: 100%;
+}
+
+.filter-option-group button:hover {
+  background: #e0e0e0;
+}
+
+.filter-option-group button.active {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-inline: 0.5rem;
+}
+
+.main-content {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.filter-toggle {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 20;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.filter-toggle.active,
+.member-toggle.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.reset-all-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 3rem;
+  margin: 2rem 0 0;
+}
+
+.reset-all-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reset-all-button:hover {
+  background: #b02a37;
+}
+
+.filter-section {
+  margin-bottom: 1.5rem;
+}
+
+.filter-section h3 {
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  padding-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-section-content {
+  padding-left: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.filter-option-group button {
+  font-weight: 600;
+  all: unset;
+  display: inline-block;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background 0.2s;
+  cursor: pointer;
+  color: #333;
+}
+
+.filter-option-group button:hover {
+  background: #eee;
+}
+
+.filter-option-group button.active {
+  font-weight: 600;
+  background: #007bff;
+  color: white;
+  font-weight: 600;
+}
+
+.filter-buttons {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ccc;
+}
+
+.filter-buttons button {
+  padding: 0.5rem 1rem;
+  background: #ddd;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.filter-buttons button:hover {
+  background: #ccc;
+}
+
+.filter-toggle-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.5rem;
+}
+
+.member-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100vh;
+  padding: 4rem 1rem 1rem;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.member-sidebar h2 {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.3rem;
+}
+
+.member-list-scroll {
+  max-height: 50vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 1rem;
+}
+
+.member-list-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.member-list-scroll::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 3px;
+}
+
+.member-list-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
+}
+
+.member-header {
+  padding: 1rem 1rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.member-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.member-toggle-icon {
+  margin-right: 0.5rem;
+}
+
+.member-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.member-list li {
+  margin-bottom: 0.5rem;
+}
+
+.member-list button {
+  all: unset;
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+  font-size: 1rem;
+}
+
+.member-list button:hover {
+  background: #e0e0e0;
+}
+
+.member-list button.active {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-inline: 0.5rem;
+}
+
+.member-roles {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+}
+
+.member-roles button {
+  padding: 0.3rem 0.6rem;
+  background: #eee;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.member-roles button.active {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.member-reset {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 1rem 0;
+  border-top: 1px solid #ccc;
+}
+
+.member-reset button {
+  padding: 0.5rem 1rem;
+  background: #ddd;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.member-reset button:hover {
+  background: #ccc;
+}
+
+.member-item {
+  margin-bottom: 0.5rem;
+}
+
+.member-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+  width: 100%;
+  cursor: pointer;
+}
+
+.member-wrapper:hover {
+  background: #f0f0f0;
+}
+
+.member-name,
+.member-name.active {
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.member-name.active {
+  color: #007bff;
+}
+
+.member-delete {
+  display: none;
+  cursor: pointer;
+  margin-left: 0.75rem;
+  font-size: 1rem;
+  color: #888;
+  transition: color 0.2s;
+}
+
+.member-wrapper:hover .member-delete {
+  display: inline;
+}
+
+.member-delete:hover {
+  color: #c00;
+}
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  font-size: 1rem;
+  z-index: 1000;
+  animation: fadein 0.3s ease-out;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
