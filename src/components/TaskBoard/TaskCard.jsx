@@ -1,26 +1,22 @@
-import { child, remove, update, onValue } from "firebase/database";
+import { child, remove, update } from "firebase/database";
 import { assignmentsRef, membersRef } from "../../firebase/config";
 import { useEffect, useState } from "react";
+import { useFirebaseData } from "../../hooks/useFirebaseData";
 import { formatCategory, formatStatus } from "../../utils/format";
-import { useAlert } from "../../utils/useAlert";
 
-export function TaskCard({ id, title, category, status, timestamp, member }) {
+export function TaskCard({
+  id,
+  title,
+  category,
+  status,
+  timestamp,
+  member,
+  showAlert,
+  onDelete
+}) {
   const taskRef = child(assignmentsRef, id);
-  const [members, setMembers] = useState([]);
+  const members = useFirebaseData(membersRef);
   const [assignedMember, setAssignedMember] = useState(null);
-  const [message, type, showAlert] = useAlert();
-
-  useEffect(() => {
-    onValue(membersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) {
-        setMembers([]);
-        return;
-      }
-      const array = Object.entries(data).map(([id, obj]) => ({ id, ...obj }));
-      setMembers(array);
-    });
-  }, []);
 
   useEffect(() => {
     if (!member) return;
@@ -38,9 +34,23 @@ export function TaskCard({ id, title, category, status, timestamp, member }) {
     update(taskRef, { status: "finished" });
   }
 
-  async function handleDelete() {
-    await remove(taskRef);
-    showAlert(`Uppgift "${title}" har tagits bort`, "error");
+  function handleReset() {
+    update(taskRef, {
+      status: "new",
+      member: ""
+    });
+    showAlert("Uppgift återställd till 'Ny uppgift'", "success");
+  }
+
+  function handleUndo() {
+    update(taskRef, {
+      status: "in-progress"
+    });
+    showAlert("Uppgift återställd till 'Pågående'", "success");
+  }
+
+  function handleDelete() {
+    onDelete(id, title);
   }
 
   return (
@@ -77,19 +87,37 @@ export function TaskCard({ id, title, category, status, timestamp, member }) {
               ))}
           </select>
         </>
-
       )}
 
-
       {status === "in-progress" && (
-        <button onClick={handleFinish}>✅ Markera som klar</button>
+        <>
+          <span
+            className="task-reset-icon"
+            title="Återställ till ny uppgift"
+            onClick={handleReset}
+          >
+            ⬅️
+          </span>
+          <div className="task-button-group">
+            <button onClick={handleFinish}>✅ Markera som klar</button>
+          </div>
+        </>
       )}
 
       {status === "finished" && (
-        <button onClick={handleDelete}>🗑️ Radera</button>
+        <>
+          <span
+            className="task-undo-icon"
+            title="Återgå till pågående"
+            onClick={handleUndo}
+          >
+            ↩️
+          </span>
+          <div className="task-button-group">
+            <button onClick={handleDelete}>🗑️ Radera</button>
+          </div>
+        </>
       )}
     </div>
-
   );
-  { message && <div className={`toast ${type}`}>{message}</div> }
 }

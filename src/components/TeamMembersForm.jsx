@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { push, update, child } from "firebase/database";
 import { membersRef } from "../firebase/config";
-import { useAlert } from "../utils/useAlert";
+import { useAlert } from "../hooks/useAlert";
 
 export function TeamMembersForm() {
   const [name, setName] = useState("");
@@ -11,7 +11,10 @@ export function TeamMembersForm() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      showAlert("Du måste ange ett namn", "error");
+      return;
+    }
 
     const newID = push(membersRef).key;
     const newRef = child(membersRef, newID);
@@ -22,10 +25,10 @@ export function TeamMembersForm() {
     };
 
     update(newRef, newMember);
-    event.target.reset();
     setName("");
     setRole("ux");
-    showAlert("Medarbetare tillagd");
+    showAlert("Medarbetare tillagd", "success");
+    event.target.reset(); // kan tas bort om vi litar helt på useState
   }
 
   return (
@@ -33,7 +36,6 @@ export function TeamMembersForm() {
       <form onSubmit={handleSubmit}>
         <h2>Lägg till medarbetare</h2>
 
-       
         <input
           id="name"
           type="text"
@@ -43,17 +45,21 @@ export function TeamMembersForm() {
           required
         />
 
-        <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
+        <select
+          id="role"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          required
+        >
           <option value="ux">UX</option>
           <option value="frontend">Frontend</option>
           <option value="backend">Backend</option>
         </select>
 
         <button type="submit">Lägg till</button>
-
-        {message && <div className={`toast ${type}`}>{message}</div>}
-
       </form>
+
+      {message && <div className={`toast ${type}`}>{message}</div>}
     </div>
   );
 }

@@ -1,10 +1,10 @@
 import { TaskCard } from "./TaskCard";
 
-export function TaskColumn({ status, tasks }) {
+export function TaskColumn({ status, tasks, showAlert, onDelete }) {
   const statusName = {
-    "new": "Ny uppgift",
+    new: "Ny uppgift",
     "in-progress": "Pågående",
-    "finished": "Avslutad"
+    finished: "Avslutad",
   };
 
   const filtered = tasks.filter((t) => t.status === status);
@@ -13,7 +13,12 @@ export function TaskColumn({ status, tasks }) {
     <div className="task-column">
       <h2>{statusName[status]}</h2>
       {filtered.map((task) => (
-        <TaskCard key={task.id} {...task} />
+        <TaskCard
+          key={task.id}
+          {...task}
+          showAlert={showAlert}
+          onDelete={onDelete}
+        />
       ))}
     </div>
   );

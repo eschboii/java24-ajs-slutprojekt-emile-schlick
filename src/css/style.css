@@ -25,7 +25,8 @@ form {
   flex-wrap: wrap;
   margin-top: 2rem;
   padding: 0 1rem;
-  min-height: 230px; /* 💡 anpassa vid behov */
+  min-height: 230px;
+  /* 💡 anpassa vid behov */
 }
 
 .form-card {
@@ -128,8 +129,6 @@ button {
   font-size: 1rem;
 }
 
-
-
 .task-board {
   display: flex;
   flex-wrap: wrap;
@@ -138,7 +137,6 @@ button {
   align-items: flex-start;
   padding: 2rem 1rem;
 }
-
 
 .task-column {
   background: #ffffff;
@@ -172,6 +170,13 @@ button {
   cursor: pointer;
 }
 
+.task-button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+
 .task-delete-icon {
   display: none;
   position: absolute;
@@ -180,7 +185,7 @@ button {
   font-size: 1rem;
   cursor: pointer;
   color: #999;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .task-card:hover .task-delete-icon {
@@ -188,9 +193,8 @@ button {
 }
 
 .task-delete-icon:hover {
-  color: #c00;
+  transform: scale(1.15);
 }
-
 
 .task-card h3 {
   margin: 0 0 0.5rem;
@@ -210,9 +214,65 @@ button {
   background-color: #0056b3;
 }
 
+.task-reset-icon {
+  display: none;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.task-card:hover .task-reset-icon {
+  display: inline;
+}
+
+.task-reset-icon:hover {
+  transform: scale(1.15);
+}
+
+.task-undo-icon {
+  display: none;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.task-card:hover .task-undo-icon {
+  display: inline;
+}
+
+.task-undo-icon:hover {
+  transform: scale(1.15);
+}
+
 .task-card select {
-  margin-top: 0.5rem;
   width: 100%;
+  padding: 0.45rem 0.75rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  background-color: white;
+  color: #333;
+  font-family: inherit;
+}
+
+.task-card select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.task-card option {
+  font-weight: normal;
+  background-color: white;
+  color: #333;
 }
 
 .filter-sidebar {
@@ -294,6 +354,7 @@ button {
   color: white;
   border-color: #007bff;
 }
+
 .reset-all-section {
   display: flex;
   justify-content: center;

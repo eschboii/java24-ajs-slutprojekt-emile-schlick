@@ -2,7 +2,7 @@ import { push, update, child } from "firebase/database";
 import { assignmentsRef } from "../firebase/config";
 import { timestamp } from "../utils/timestamp";
 import { useState } from "react";
-import { useAlert } from "../utils/useAlert";
+import { useAlert } from "../hooks/useAlert";
 
 export function AddTask() {
   const [title, setTitle] = useState("");
@@ -12,7 +12,10 @@ export function AddTask() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      showAlert("Du måste ange en titel för uppgiften", "error");
+      return;
+    }
 
     const newID = push(assignmentsRef).key;
     const newRef = child(assignmentsRef, newID);
@@ -26,10 +29,10 @@ export function AddTask() {
     };
 
     update(newRef, newTask);
-    event.target.reset();
     setTitle("");
     setCategory("ux");
-    showAlert("Uppgift tillagd");
+    showAlert("Uppgift tillagd", "success");
+    event.target.reset(); // denna kan ev. tas bort då vi använder controlled inputs
   }
 
   return (
@@ -46,14 +49,20 @@ export function AddTask() {
           value={title}
         />
 
-        <select id="category" onChange={(e) => setCategory(e.target.value)} value={category}>
+        <select
+          id="category"
+          onChange={(e) => setCategory(e.target.value)}
+          value={category}
+          required
+        >
           <option value="ux">UX</option>
           <option value="frontend">Frontend</option>
           <option value="backend">Backend</option>
         </select>
 
-        <button>Lägg till</button>
+        <button type="submit">Lägg till</button>
       </form>
+
       {message && <div className={`toast ${type}`}>{message}</div>}
     </div>
   );
