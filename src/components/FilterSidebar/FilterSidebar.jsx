@@ -1,6 +1,17 @@
+/**
+ * Denna komponent används för att filtrera uppgifter och innehåller tre sektioner:
+ *  - Status (ny, pågående, färdig)
+ *  - Kategori (UX, Frontend, Backend)
+ *  - Sortering (titel, nyast, äldst)
+ *
+ * Properties:
+ * - onApply: funktion som skickar valda filter till app.jsx
+ * - onReset: funktion som nollställer filter i app.jsx
+ * - isOpen: styr om sidopanelen ska visas eller inte
+ * - filterProp, sortProp, categoryProp, memberProp: aktuella värden som properties
+ */
+
 import { useState, useEffect } from 'react';
-import { onValue } from 'firebase/database';
-import { membersRef } from '../../firebase/config';
 import { FilterSection } from './FilterSection';
 
 export function FilterSidebar({
@@ -12,12 +23,13 @@ export function FilterSidebar({
   category: categoryProp,
   member: memberProp
 }) {
+  // Lokala state för varje filter
   const [filter, setFilter] = useState('all');
   const [sort, setSort] = useState('default');
   const [category, setCategory] = useState('all');
   const [member, setMember] = useState('all');
-  const [members, setMembers] = useState([]);
 
+  // När properties ändras från app.jsx, synkas ett lokalt state
   useEffect(() => {
     setFilter(filterProp);
     setSort(sortProp);
@@ -25,21 +37,14 @@ export function FilterSidebar({
     setMember(memberProp);
   }, [filterProp, sortProp, categoryProp, memberProp]);
 
-  useEffect(() => {
-    onValue(membersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) return setMembers([]);
-      const list = Object.entries(data).map(([id, obj]) => ({ id, ...obj }));
-      setMembers(list);
-    });
-  }, []);
-
+  // Ser till att panelen inte renederas om den är stängd
   if (!isOpen) return null;
 
   return (
     <aside className="filter-sidebar">
       <h2>Filter</h2>
 
+      {/* Filtrerar uppgifter */}
       <FilterSection
         title="Status"
         options={[
@@ -52,6 +57,7 @@ export function FilterSidebar({
         onChange={setFilter}
       />
 
+      {/* Filtrering baserat på kategori */}
       <FilterSection
         title="Kategori"
         options={[
@@ -64,6 +70,7 @@ export function FilterSidebar({
         onChange={setCategory}
       />
 
+      {/* Sorteringsalternativ */}
       <FilterSection
         title="Sortera efter"
         options={[
@@ -78,16 +85,19 @@ export function FilterSidebar({
       />
 
       <div className="filter-buttons">
+        {/* Skickar valda filter till app.jsx */}
         <button onClick={() => onApply({ filter, sort, category, member })}>
           Tillämpa filter
         </button>
+
+        {/* Återställer lokalt och anropar reset i App.jsx */}
         <button
           onClick={() => {
             setFilter("all");
             setSort("default");
             setCategory("all");
             setMember("all");
-            onReset(); 
+            onReset();
           }}
         >
           Återställ

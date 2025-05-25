@@ -1,4 +1,17 @@
-import { child, remove, update } from "firebase/database";
+/**
+ * Visar uppgiftskort med titel, kategori, status och tilldelad medlem
+ * Samt visar olika innehåll beroende på vilken status som uppgiften har:
+ * - "new": formulär för att tilldela medlem
+ * - "in-progress": knapp för att markera som klar
+ * - "finished": knapp för att ångra eller ta bort
+ *
+ * Properties:
+ * - id, title, category, status, timestamp, member: data om uppgiften
+ * - showAlert: funktion för att visa toast-meddelanden
+ * - onDelete: funktion för att radera uppgiften och hanteras i app.jsx
+ */
+
+import { child, update } from "firebase/database";
 import { assignmentsRef, membersRef } from "../../firebase/config";
 import { useEffect, useState } from "react";
 import { useFirebaseData } from "../../hooks/useFirebaseData";
@@ -14,26 +27,35 @@ export function TaskCard({
   showAlert,
   onDelete
 }) {
+  // Referens till specifik uppgift i databasen
   const taskRef = child(assignmentsRef, id);
+
+  // Hämtar alla medlemmar från Firebase
   const members = useFirebaseData(membersRef);
+
+  // Sparar den tilldelade medlemmen som objekt
   const [assignedMember, setAssignedMember] = useState(null);
 
+  // Vid ämdring av member-id hittas motsvarande medlem
   useEffect(() => {
     if (!member) return;
     const m = members.find((m) => m.id === member);
     setAssignedMember(m);
   }, [members, member]);
 
+  // Tilldelar medlem och sätter uppgiftens status till "in-progress"
   function handleAssign(event) {
     const selectedId = event.target.value;
     if (!selectedId) return;
     update(taskRef, { member: selectedId, status: "in-progress" });
   }
 
+  // Markerar uppgiften som färdig
   function handleFinish() {
     update(taskRef, { status: "finished" });
   }
 
+  // Återställer uppgiften till "new" och rensar tilldelad medlem
   function handleReset() {
     update(taskRef, {
       status: "new",
@@ -42,6 +64,7 @@ export function TaskCard({
     showAlert("Uppgift återställd till 'Ny uppgift'", "success");
   }
 
+  // Ångrar att uppgiften är klar, skickar tillbaka till "in-progress"
   function handleUndo() {
     update(taskRef, {
       status: "in-progress"
@@ -49,6 +72,7 @@ export function TaskCard({
     showAlert("Uppgift återställd till 'Pågående'", "success");
   }
 
+  // Anropar delete-funktionen från app.jsx
   function handleDelete() {
     onDelete(id, title);
   }
@@ -60,12 +84,14 @@ export function TaskCard({
       <p><strong>Skapad:</strong> {timestamp}</p>
       <p><strong>Status:</strong> {formatStatus(status)}</p>
 
+      {/* Visar tilldelad medlem om det finns */}
       {assignedMember && (
         <p>
           <strong>Tilldelad:</strong> {assignedMember.name} ({formatCategory(assignedMember.category)})
         </p>
       )}
 
+      {/* Om uppgiften är ny visa meny för att tilldela medarbetare och soptunneikon */}
       {status === "new" && (
         <>
           <span
@@ -89,6 +115,7 @@ export function TaskCard({
         </>
       )}
 
+      {/* Om uppgiften är pågående visas knappar för att markera som klar och återställsikon */}
       {status === "in-progress" && (
         <>
           <span
@@ -104,6 +131,7 @@ export function TaskCard({
         </>
       )}
 
+      {/* Om uppgiften är klar visa knapp för ångra eller ta bort */}
       {status === "finished" && (
         <>
           <span

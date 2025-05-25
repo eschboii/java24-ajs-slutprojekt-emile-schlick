@@ -1,3 +1,7 @@
+/**
+ * Knapp som visas i övre högra hörnet för att öppna/stänga sidopanelen för medarbetare och fungerar som filtertoggle
+ */
+
 import { Users } from 'lucide-react';
 
 export function MemberToggle({ onClick, isOpen, hasActive }) {
@@ -7,7 +11,10 @@ export function MemberToggle({ onClick, isOpen, hasActive }) {
       className={`member-toggle ${hasActive ? 'active' : ''}`}
       title="Öppna/stäng teammedlemmar"
     >
+      {/* Ikon från lucide-react */}
       <Users className="member-toggle-icon" />
+
+      {/* Text med eventuell asterisk vid aktivt filter */}
       Visa medlemmar{hasActive ? ' *' : ''}
     </button>
   );

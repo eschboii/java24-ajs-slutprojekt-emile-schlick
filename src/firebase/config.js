@@ -1,3 +1,9 @@
+/**
+ * Fil för att konfigurerar och initierar kopplingen till Firebase och exporterar två ref:
+ *  - assignmentsRef: pekar på alla uppgifter i databasen
+ *  - membersRef: pekar på alla medlemmar i databasen
+ */
+
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref } from "firebase/database";
 
@@ -11,8 +17,12 @@ const firebaseConfig = {
     appId: "1:565257703061:web:9897333c18742008c8159c"
 };
 
+// Initierar Firebase
 const app = initializeApp(firebaseConfig);
+
+// Hämtar referens till vår databas
 const db = getDatabase(app);
 
+// Exporterar referenser till specifika delar av databasen
 export const assignmentsRef = ref(db, "/assignments");
 export const membersRef = ref(db, "/members");

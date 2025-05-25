@@ -1,34 +1,53 @@
+/**
+ * Ett formulär för att lägga till nya medarbetare och skickar datan till Firebase
+ *
+ * Funktionalitet:
+ * - Användaren fyller i namn och roll
+ * - Vid submit skapas ett nytt medlems-objekt
+ * - Toast visas som bekräftelse
+ */
+
 import { useState } from "react";
 import { push, update, child } from "firebase/database";
 import { membersRef } from "../firebase/config";
 import { useAlert } from "../hooks/useAlert";
 
 export function TeamMembersForm() {
+  // State för namn och roll
   const [name, setName] = useState("");
   const [role, setRole] = useState("ux");
+
+  // Toast-meddelandehantering 
   const [message, type, showAlert] = useAlert();
 
+  // Hanterar submit
   function handleSubmit(event) {
     event.preventDefault();
 
+    // Säkerställ att namn inte är tomt
     if (!name.trim()) {
       showAlert("Du måste ange ett namn", "error");
       return;
     }
 
+    // Skapar ett nytt ID och referens i databasen
     const newID = push(membersRef).key;
     const newRef = child(membersRef, newID);
 
+    // Skapar nytt medlem-objekt
     const newMember = {
       name: name.trim(),
       category: role
     };
 
+    // Sparar till Firebase
     update(newRef, newMember);
+
+    // Återställ formuläret
     setName("");
     setRole("ux");
     showAlert("Medarbetare tillagd", "success");
-    event.target.reset(); // kan tas bort om vi litar helt på useState
+    event.target.reset();
   }
 
   return (
@@ -36,6 +55,7 @@ export function TeamMembersForm() {
       <form onSubmit={handleSubmit}>
         <h2>Lägg till medarbetare</h2>
 
+        {/* Inputfält för namn */}
         <input
           id="name"
           type="text"
@@ -45,6 +65,7 @@ export function TeamMembersForm() {
           required
         />
 
+        {/* Dropdown för att välja roll */}
         <select
           id="role"
           value={role}
@@ -59,6 +80,7 @@ export function TeamMembersForm() {
         <button type="submit">Lägg till</button>
       </form>
 
+      {/* Visar toast-meddelande */}
       {message && <div className={`toast ${type}`}>{message}</div>}
     </div>
   );

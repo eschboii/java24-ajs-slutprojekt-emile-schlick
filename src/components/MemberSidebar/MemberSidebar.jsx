@@ -1,3 +1,17 @@
+/**
+ * Visar sidopanelen för medarbetare där vi kan:
+ *  - Filtrera medlemmar per roll
+ *  - Välja en specifik medlem för att filtrera uppgifter
+ *  - Se antal pågående uppgifter per medlem
+ *  - Ta bort en medlem som då återställer tilldelade uppgifter till "Ny uppgift"
+ *
+ * Properties:
+ * - isOpen: styr om sidopanelen är synlig
+ * - selectedMember: det id eller roll som är valt
+ * - setSelectedMember: funktion som sätter nytt medlem/roll-filter
+ * - onReset: funktion som återställer valda filter
+ */
+
 import { useState, useEffect } from 'react';
 import { onValue, update, remove, get, child } from 'firebase/database';
 import { membersRef, assignmentsRef } from '../../firebase/config';
@@ -10,6 +24,7 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
   const [selectedRole, setSelectedRole] = useState('all');
   const [message, type, showAlert] = useAlert();
 
+  // Hämtar alla medlemmar från databasen
   useEffect(() => {
     onValue(membersRef, (snapshot) => {
       const data = snapshot.val();
@@ -19,6 +34,7 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
     });
   }, []);
 
+  // Hämtar alla uppgifter och räknar hur många som är pågående per medlem
   useEffect(() => {
     onValue(assignmentsRef, (snapshot) => {
       const data = snapshot.val();
@@ -34,12 +50,14 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
     });
   }, []);
 
+  // Om "Alla medlemmar" är vald så nollställs rollfiltreringen (Fungerar som återställknappen)
   useEffect(() => {
     if (selectedMember === "all") {
       setSelectedRole("all");
     }
   }, [selectedMember]);
 
+  // Tar bort medlem från databasen och återställer de uppgifter som var tilldelade
   async function handleDeleteMember(memberId) {
     const member = members.find((m) => m.id === memberId);
     if (!member) return;
@@ -48,6 +66,7 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
     await remove(memberRef);
     showAlert(`${member.name} har tagits bort`, "error");
 
+    // Återställer tilldelad uppgift
     const snapshot = await get(assignmentsRef);
     const tasks = snapshot.val();
     if (!tasks) return;
@@ -67,8 +86,10 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
     }
   }
 
+  // Visar inget om panelen är stängd
   if (!isOpen) return null;
 
+  // Filtrera medlemmar baserat på roll
   const filtered = selectedRole === 'all'
     ? members
     : members.filter((m) => m.category === selectedRole);
@@ -76,7 +97,9 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
   return (
     <aside className="member-sidebar">
       <div className="member-header">
-        <h2>Team Members</h2>
+        <h2>Medarbetare</h2>
+
+        {/* Rollfilter */}
         <div className="member-roles">
           {['all', 'ux', 'frontend', 'backend'].map((role) => {
             const count =
@@ -93,7 +116,11 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
               <button
                 key={role}
                 className={selectedRole === role ? 'active' : ''}
-                onClick={() => setSelectedRole(role)}
+                onClick={() => {
+                  // Ändrar både lokal visning och skickar filtret uppåt
+                  setSelectedRole(role);
+                  setSelectedMember(role);
+                }}
               >
                 {label}
               </button>
@@ -102,6 +129,7 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
         </div>
       </div>
 
+      {/* Lista på filtrerade medlemmar */}
       <div className="member-list-scroll">
         <ul className="member-list">
           {filtered.map((member) => (
@@ -123,7 +151,7 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
                 <span
                   className="member-delete"
                   onClick={(e) => {
-                    e.stopPropagation();
+                    e.stopPropagation(); // förhindrar att klick aktiverar wrappern
                     handleDeleteMember(member.id);
                   }}
                   title="Ta bort medarbetare"
@@ -136,12 +164,14 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
         </ul>
       </div>
 
+      {/* Återställ-knapp för att återställa valt filter */}
       <div className="member-reset">
         <button onClick={onReset}>
           Återställ
         </button>
       </div>
 
+      {/* Toast-meddelande */}
       {message && <div className={`toast ${type}`}>{message}</div>}
     </aside>
   );

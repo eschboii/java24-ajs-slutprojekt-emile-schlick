@@ -1,3 +1,11 @@
+/**
+ * Formulär för att lägga till nya uppgifter och skickar uppgiften till databasen
+ *
+ * Funktionalitet:
+ * - Titel och kategori anges via formulärfält
+ * - Vid submit skapas ett nytt uppgiftsobjekt med status "new" och toast visas som bekräftelse
+ */
+
 import { push, update, child } from "firebase/database";
 import { assignmentsRef } from "../firebase/config";
 import { timestamp } from "../utils/timestamp";
@@ -5,21 +13,28 @@ import { useState } from "react";
 import { useAlert } from "../hooks/useAlert";
 
 export function AddTask() {
+  // State för titel och kategori
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("ux");
+
+  // Toast-meddelandehantering 
   const [message, type, showAlert] = useAlert();
 
+  // Hanterar submit
   function handleSubmit(event) {
     event.preventDefault();
 
+    // Säkerställer att titel inte är tom
     if (!title.trim()) {
       showAlert("Du måste ange en titel för uppgiften", "error");
       return;
     }
 
+    // Skapar ett nytt ID och referens i databasen
     const newID = push(assignmentsRef).key;
     const newRef = child(assignmentsRef, newID);
 
+    // Skapar nytt uppgiftsobjekt
     const newTask = {
       title: title.trim(),
       category,
@@ -28,11 +43,14 @@ export function AddTask() {
       member: ""
     };
 
+    // Sparar till Firebase
     update(newRef, newTask);
+
+    // Återställ formuläret
     setTitle("");
     setCategory("ux");
     showAlert("Uppgift tillagd", "success");
-    event.target.reset(); // denna kan ev. tas bort då vi använder controlled inputs
+    event.target.reset();
   }
 
   return (
@@ -40,6 +58,7 @@ export function AddTask() {
       <form onSubmit={handleSubmit}>
         <h2>Lägg till uppgift</h2>
 
+        {/* Inputfält för titel */}
         <input
           id="task"
           type="text"
@@ -49,6 +68,7 @@ export function AddTask() {
           value={title}
         />
 
+        {/* Dropdown för att välja kategori */}
         <select
           id="category"
           onChange={(e) => setCategory(e.target.value)}
@@ -63,6 +83,7 @@ export function AddTask() {
         <button type="submit">Lägg till</button>
       </form>
 
+      {/* Visar toast-meddelande */}
       {message && <div className={`toast ${type}`}>{message}</div>}
     </div>
   );
