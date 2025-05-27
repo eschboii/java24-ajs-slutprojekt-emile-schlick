@@ -27,13 +27,8 @@ export function TaskCard({
   showAlert,
   onDelete
 }) {
-  // Referens till specifik uppgift i databasen
   const taskRef = child(assignmentsRef, id);
-
-  // Hämtar alla medlemmar från Firebase
   const members = useFirebaseData(membersRef);
-
-  // Sparar den tilldelade medlemmen som objekt
   const [assignedMember, setAssignedMember] = useState(null);
 
   // Vid ämdring av member-id hittas motsvarande medlem
@@ -72,7 +67,6 @@ export function TaskCard({
     showAlert("Uppgift återställd till 'Pågående'", "success");
   }
 
-  // Anropar delete-funktionen från app.jsx
   function handleDelete() {
     onDelete(id, title);
   }
@@ -84,7 +78,6 @@ export function TaskCard({
       <p><strong>Skapad:</strong> {timestamp}</p>
       <p><strong>Status:</strong> {formatStatus(status)}</p>
 
-      {/* Visar tilldelad medlem om det finns */}
       {assignedMember && (
         <p>
           <strong>Tilldelad:</strong> {assignedMember.name} ({formatCategory(assignedMember.category)})

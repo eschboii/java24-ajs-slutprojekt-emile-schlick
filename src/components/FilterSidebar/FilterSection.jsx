@@ -10,12 +10,10 @@
 import { useState } from 'react';
 
 export function FilterSection({ title, options = [], value, onChange }) {
-  // Hanterar ifall sektionen är öppen eller stängd hamburgarmeny
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="filter-section">
-      {/* Klickbar rubrik som öppnar och stänger hamburgarmenyn */}
       <h3 onClick={() => setIsOpen(!isOpen)}>
         {title} {isOpen ? '▾' : '▸'}
       </h3>

@@ -6,7 +6,6 @@
 import { TaskColumn } from "./TaskColumn";
 
 export function TaskBoard({ tasks, filters, showAlert, onDelete }) {
-  // Filtreringsinställningar
   const { status, sort, category, member } = filters;
 
   // Filtrerar uppgifter baserat på filterval
@@ -36,7 +35,6 @@ export function TaskBoard({ tasks, filters, showAlert, onDelete }) {
     }
   });
 
-  // Renderar uppgifterna baserat på status
   return (
     <div className="task-board">
       <TaskColumn

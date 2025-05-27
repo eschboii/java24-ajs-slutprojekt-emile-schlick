@@ -17,7 +17,6 @@ export function FilterToggle({ onClick, isOpen, hasActive }) {
       className={`filter-toggle ${hasActive ? 'active' : ''}`}
       title="Öppna/stäng filterpanel"
     >
-      {/* Ikon från lucide-react */}
       <SlidersHorizontal className="filter-toggle-icon" />
 
       {/* Text som visar aktiv status med * om något filter är valt */}

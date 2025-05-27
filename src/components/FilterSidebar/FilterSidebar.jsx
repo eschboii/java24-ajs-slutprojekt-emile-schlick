@@ -44,7 +44,6 @@ export function FilterSidebar({
     <aside className="filter-sidebar">
       <h2>Filter</h2>
 
-      {/* Filtrerar uppgifter */}
       <FilterSection
         title="Status"
         options={[
@@ -57,7 +56,6 @@ export function FilterSidebar({
         onChange={setFilter}
       />
 
-      {/* Filtrering baserat på kategori */}
       <FilterSection
         title="Kategori"
         options={[
@@ -70,7 +68,6 @@ export function FilterSidebar({
         onChange={setCategory}
       />
 
-      {/* Sorteringsalternativ */}
       <FilterSection
         title="Sortera efter"
         options={[

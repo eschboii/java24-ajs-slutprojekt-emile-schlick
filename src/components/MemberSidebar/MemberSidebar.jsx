@@ -17,14 +17,15 @@ import { onValue, update, remove, get, child } from 'firebase/database';
 import { membersRef, assignmentsRef } from '../../firebase/config';
 import { formatCategory } from '../../utils/format';
 import { useAlert } from "../../hooks/useAlert";
+import { useDeleteTask } from "../../hooks/useDeleteTask";
 
 export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onReset }) {
   const [members, setMembers] = useState([]);
   const [taskCounts, setTaskCounts] = useState({});
   const [selectedRole, setSelectedRole] = useState('all');
   const [message, type, showAlert] = useAlert();
+  const { resetTasksForMember } = useDeleteTask();
 
-  // Hämtar alla medlemmar från databasen
   useEffect(() => {
     onValue(membersRef, (snapshot) => {
       const data = snapshot.val();
@@ -62,25 +63,10 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
     const member = members.find((m) => m.id === memberId);
     if (!member) return;
 
-    const memberRef = child(membersRef, memberId);
-    await remove(memberRef);
+    await remove(child(membersRef, memberId));
     showAlert(`${member.name} har tagits bort`, "error");
 
-    // Återställer tilldelad uppgift
-    const snapshot = await get(assignmentsRef);
-    const tasks = snapshot.val();
-    if (!tasks) return;
-
-    Object.entries(tasks).forEach(([taskId, task]) => {
-      if (task.member === memberId) {
-        const taskRef = child(assignmentsRef, taskId);
-        update(taskRef, {
-          status: "new",
-          member: ""
-        });
-      }
-    });
-
+    await resetTasksForMember(memberId);
     if (selectedMember === memberId) {
       setSelectedMember("all");
     }
@@ -99,7 +85,6 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
       <div className="member-header">
         <h2>Medarbetare</h2>
 
-        {/* Rollfilter */}
         <div className="member-roles">
           {['all', 'ux', 'frontend', 'backend'].map((role) => {
             const count =
@@ -171,7 +156,6 @@ export function MemberSidebar({ isOpen, selectedMember, setSelectedMember, onRes
         </button>
       </div>
 
-      {/* Toast-meddelande */}
       {message && <div className={`toast ${type}`}>{message}</div>}
     </aside>
   );

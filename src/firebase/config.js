@@ -19,8 +19,6 @@ const firebaseConfig = {
 
 // Initierar Firebase
 const app = initializeApp(firebaseConfig);
-
-// Hämtar referens till vår databas
 const db = getDatabase(app);
 
 // Exporterar referenser till specifika delar av databasen

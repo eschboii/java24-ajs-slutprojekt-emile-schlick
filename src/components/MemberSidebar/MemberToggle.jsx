@@ -11,7 +11,6 @@ export function MemberToggle({ onClick, isOpen, hasActive }) {
       className={`member-toggle ${hasActive ? 'active' : ''}`}
       title="Öppna/stäng teammedlemmar"
     >
-      {/* Ikon från lucide-react */}
       <Users className="member-toggle-icon" />
 
       {/* Text med eventuell asterisk vid aktivt filter */}
